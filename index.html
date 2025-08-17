@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>街拍画廊</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a; /* 深色背景更酷 */
+        }
+        canvas {
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+
+    <!-- 关键改动：先加载数据文件 -->
+    <script src="data.js"></script>
+    <!-- 再加载我们的主逻辑文件 -->
+    <script src="main.js"></script>
+
+</body>
+</html>

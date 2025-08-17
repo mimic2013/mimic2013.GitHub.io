@@ -1,0 +1,47 @@
+使用 PowerShell 重新编号文件的步骤
+请再次严格按照我的步骤来，特别是要先用“预览命令”来确保万无一失。
+第一步：在您的 MyCanvasProject 文件夹里打开 PowerShell
+这一步和上次完全一样，确保您在正确的文件夹下。
+打开 MyCanvasProject 文件夹。
+清空地址栏，输入 powershell，然后按回车。
+第二步：执行预览命令（安全检查）
+这个命令会模拟重命名的过程，告诉您每个文件将会被改成什么新名字，但不会真的动手。
+完整地复制下面这一整段代码：
+code
+Powershell
+$counter = 1;
+Get-ChildItem "street*.jpg" | Sort-Object -Property @{Expression={[int]($_.BaseName -replace 'street ', '')}} | ForEach-Object {
+    $newName = "street$($counter).jpg";
+    Rename-Item -Path $_.FullName -NewName $newName -WhatIf;
+    $counter++;
+}
+回到 PowerShell 窗口，点击鼠标右键粘贴进去，然后按回车。
+您将会看到类似这样的预览结果：
+code
+Code
+What if: Performing the operation "Rename File" on target "Item: C:\...\MyCanvasProject\street 101.jpg Destination: C:\...\MyCanvasProject\street1.jpg".
+What if: Performing the operation "Rename File" on target "Item: C:\...\MyCanvasProject\street 102.jpg Destination: C:\...\MyCanvasProject\street2.jpg".
+What if: Performing the operation "Rename File" on target "Item: C:\...\MyCanvasProject\street 103.jpg Destination: C:\...\MyCanvasProject\street3.jpg".
+...
+请仔细检查，是不是 street 101.jpg 对应 street1.jpg，street 102.jpg 对应 street2.jpg。
+第三步：执行真正的重命名命令
+如果预览结果和您想的完全一样，那我们就可以大胆执行最终的命令了。
+完整地复制下面这段没有 -WhatIf 的最终代码：
+code
+Powershell
+$counter = 1;
+Get-ChildItem "street*.jpg" | Sort-Object -Property @{Expression={[int]($_.BaseName -replace 'street ', '')}} | ForEach-Object {
+    $newName = "street$($counter).jpg";
+    Rename-Item -Path $_.FullName -NewName $newName;
+    $counter++;
+}
+回到 PowerShell 窗口，右键粘贴，然后按回车。
+命令瞬间执行完毕。现在您再去看您的文件夹，所有图片都已经被重命名为您想要的 street1.jpg, street2.jpg ... street10.jpg 格式了！
+命令解释（可选阅读）
+$counter = 1;: 我们创建了一个“计数器”，并让它从 1 开始。
+Get-ChildItem "street*.jpg": 获取所有以 "street" 开头的 jpg 文件。
+Sort-Object ...: 这是最关键的一步。我们让 PowerShell 不要按文字排序（否则1010会排在102前面），而是按文件名里提取出来的数字进行从小到大的排序。
+ForEach-Object { ... }: 对排好序的每一个文件，执行 {} 里的操作。
+$newName = "street$($counter).jpg";: 用我们当前的计数器，生成一个新的文件名，比如 "street1.jpg"。
+Rename-Item ...: 执行重命名。
+$counter++;: 非常重要！将计数器加 1，这样下一个文件处理时就会生成 "street2.jpg"。
